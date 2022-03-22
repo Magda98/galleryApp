@@ -1,0 +1,3 @@
+<div *ngIf="(activePhoto$ | async)" (click)="hidePhoto()" class="active-photo">
+    <img [src]="(activePhoto$ | async)?.url">
+</div>

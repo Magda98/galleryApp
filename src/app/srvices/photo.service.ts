@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { Photo } from '../interface/photo';
 
 const initialPhotos: Photo[] = [
@@ -38,7 +39,13 @@ const initialPhotos: Photo[] = [
   providedIn: 'root'
 })
 export class PhotoService {
-  photos: Photo[] = initialPhotos;
+    photos: Photo[] = initialPhotos;
+    noPhotoID = "";
+    activePhotoID$ = new BehaviorSubject(this.noPhotoID);
+    activePhoto$: Observable<Photo | undefined> = this.activePhotoID$.pipe(
+    map(photoID => this.photos.find(photo => photo.id === photoID))
+);
+
 
   constructor() { }
 }
