@@ -1,5 +1,9 @@
 <div class="photos-list">
-    <div *ngFor="let photo of photosList" class="photo">
-        <app-photo [photo]="photo"></app-photo>
+    <div *ngIf="photosList | async as photos">
+        <div *ngFor="let photo of photos" class="photo">
+            <app-photo [photo]="photo"></app-photo>
+        </div>
     </div>
+    <input type="file" multiple="multiple" id="file" [(ngModel)]="filesCollection"
+        accept="image/png, image/jpg, image/jpeg" (change)="handleFileInput($event)">
 </div>
