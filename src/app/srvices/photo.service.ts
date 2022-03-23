@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, concatAll, map, mergeAll, Observable, of, scan, startWith, Subject, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, combineLatest, concatAll, map, mergeAll, Observable, of, scan, share, startWith, Subject, withLatestFrom } from 'rxjs';
 import { Photo } from '../interface/photo';
 import flatten from 'ramda/es/flatten';
+import { propEq, take } from 'ramda';
 
 const initialPhotos: Photo[] = [
     {
@@ -40,25 +41,32 @@ const initialPhotos: Photo[] = [
   providedIn: 'root'
 })
 export class PhotoService {
-    photos: Photo[] = initialPhotos;
+    photosSource$ = new BehaviorSubject(initialPhotos);
+    photos$ = this.photosSource$.asObservable();
+
     noPhotoID = "";
     newPhotos$ = new Subject<Photo[]>()
     activePhotoID$ = new BehaviorSubject(this.noPhotoID);
-    allNewPhotos$ = this.newPhotos$.pipe(
-        scan((allPhotos, newPhotos) => allPhotos.concat(newPhotos), [] as Photo[]),
-        startWith([]),
-    )
-    photos$ = combineLatest([
-        of(this.photos),
-        this.allNewPhotos$
-    ]).pipe(
-        map((collection: Array<Array<Photo>>) => flatten(collection)),
-    );
+
+    addData(newPhotos: Photo[]) {
+        this.photosSource$.next(this.photosSource$.value.concat(newPhotos));
+    }
+    
     activePhoto$: Observable<Photo | undefined> = this.activePhotoID$.pipe(
         withLatestFrom(this.photos$),
-        map(([photoID, photos]) => photos.find(photo => photo.id === photoID))
+        map(([photoID, photos]) => {
+            console.log(photos, photoID);
+            
+           return  photos.find(propEq("id", photoID))
+        })
     );
 
 
-  constructor() { }
+    constructor() { 
+      
+        this.photos$.subscribe(value => {
+            take(1),
+            console.log("Subscription got", value);                                     
+        });
+  }
 }

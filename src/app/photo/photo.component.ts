@@ -16,6 +16,7 @@ export class PhotoComponent implements OnInit {
   }
 
   onPhotoClick(id: string) {
+    console.log(id);
     this.photoService.activePhotoID$.next(id)
   }
 

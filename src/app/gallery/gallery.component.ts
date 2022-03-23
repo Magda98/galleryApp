@@ -41,7 +41,7 @@ export class GalleryComponent implements OnInit {
     )
         
     uploadedImages$.subscribe(
-        photos => this.photosService.newPhotos$.next(photos)
+        photos => this.photosService.addData(photos)
     )
 }
 
