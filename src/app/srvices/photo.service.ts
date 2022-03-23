@@ -49,7 +49,7 @@ export class PhotoService {
     activePhotoID$ = new BehaviorSubject(this.noPhotoID);
 
     addData(newPhotos: Photo[]) {
-        this.photosSource$.next(this.photosSource$.value.concat(newPhotos));
+        this.photosSource$.next(this.photosSource$.getValue().concat(newPhotos));
     }
     
     activePhoto$: Observable<Photo | undefined> = this.activePhotoID$.pipe(
@@ -64,8 +64,10 @@ export class PhotoService {
 
     constructor() { 
       
+        this.photosSource$.subscribe(value => {
+            console.log("Subscription subject got", value);                                     
+        })
         this.photos$.subscribe(value => {
-            take(1),
             console.log("Subscription got", value);                                     
         });
   }
